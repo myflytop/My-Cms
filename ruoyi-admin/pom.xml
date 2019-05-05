@@ -60,6 +60,11 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
         
+         <!-- 内容管理-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-cms</artifactId>
+        </dependency>    
     </dependencies>
 
     <build>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header('新增标签')"></head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	  <form class="form-horizontal m" id="form-tag-edit" th:if="${tag!=null}" th:object="${tag}">	
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签ID</label>
+			<div class="col-sm-8">
+				<input class="form-control disabled"  th:field="*{tagId}" type="text" name="tagId"
+			   readonly>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签名</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" th:field="*{tagName}" name="tagName"
+					placeholder="标签名" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签路径</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" th:field="*{tagUrl}" name="tagUrl"
+					placeholder="标签路径" >
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签描述</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" th:field="*{remark}" name="remark"
+					placeholder="标签描述" >
+			</div>
+		</div>
+		<div class="form-group text-center">
+			<button type="button" class="btn btn-primary" onclick="submitHandler()">保存</button>
+		</div>
+		</form>
+		<div th:if="${tag==null}">未找到</div>
+	</div>
+	<div th:include="include::footer"></div>
+	<script>
+		var prefix = ctx + "cms/tag";
+
+		$("#form-tag-edit").validate({
+			rules : {
+				tagName : {
+					remote : {
+						url : prefix + "/checkTagNameUnique",
+						type : "post",
+						dataType : "json",
+						data : {
+							"tagName" : function() {
+								return $.common.trim($("#tagName").val());
+							},
+							"tagId" :$("input[name='tagId']").val()
+						},
+						dataFilter : function(data, type) {
+							return $.validate.unique(data);
+						}
+					}
+				},
+			},
+			messages : {
+				"tagName" : {
+					remote : "标签名已经存在"
+				}
+			},
+			focusCleanup : true
+		});
+
+		function submitHandler() {
+			if ($.validate.form("form-tag-edit")) {
+				$.operate.save(prefix + "/edit", $('#form-tag-edit').serialize());
+			}
+		}
+	</script>
+</body>
+</html>

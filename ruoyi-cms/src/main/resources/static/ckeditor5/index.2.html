@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    
+    <link
+      type="text/css"
+      href="sample/css/sample.css"
+      rel="stylesheet"
+      media="screen"
+    />
+    <link type="text/css" href="style.css" rel="stylesheet" media="screen" />
+    <link
+      href="https://cdn.bootcss.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>CKEditor 5 – classic editor build sample</title>
+  </head>
+  <body class="white-bg">
+
+    <h1 style="display: inline-block;">文章编辑</h1>
+    <div class="row" style="padding:10px">
+      <div class="col-md-9" >
+        <form class="form-horizontal m" id="form-cat-add">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input class="form-control" type="text" name="remark" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input class="form-control" type="text" name="remark" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-12">
+          <div id="editor" >
+            <h2>The three greatest things you learn from traveling</h2>
+            <p>
+              Like all the great things on earth traveling teaches us by
+              example. Here are some of the most precious lessons I’ve learned
+              over the years of traveling.
+            </p>
+
+            <h3>Appreciation of diversity</h3>
+
+            <p>
+              Getting used to an entirely different culture can be challenging.
+              While it’s also nice to learn about cultures online or from books,
+              nothing comes close to experiencing
+              <a href="https://en.wikipedia.org/wiki/Cultural_diversity"
+                >cultural diversity</a
+              >
+              in person. You learn to appreciate each and every single one of
+              the differences while you become more culturally fluid.
+            </p>
+
+            <figure class="image image-style-side">
+              <img
+                src="sample/img/umbrellas.jpg"
+                alt="Three Monks walking on ancient temple."
+              />
+              <figcaption>
+                Leaving your comfort zone might lead you to such beautiful
+                sceneries like this one.
+              </figcaption>
+            </figure>
+
+            <h3>Confidence</h3>
+
+            <p>
+              Going to a new place can be quite terrifying. While change and
+              uncertainty makes us scared, traveling teaches us how ridiculous
+              it is to be afraid of something before it happens. The moment you
+              face your fear and see there was nothing to be afraid of, is the
+              moment you discover bliss.
+            </p>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+        <div class="ibox float-e-margins">
+          <div class="ibox-title">
+            <h5>选择分类</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link"><i class="fa fa-times"></i></a>
+            </div>
+          </div>
+          <div class="ibox-content" style="display: block;">
+          
+          </div>
+        </div>
+       </div>
+
+<div class="form-group">
+  <div class="ibox float-e-margins">
+    <div class="ibox-title">
+      <h5>选择标签</h5>
+      <div class="ibox-tools">
+        <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link"><i class="fa fa-times"></i></a>
+      </div>
+    </div>
+    <div class="ibox-content" style="display: block;">
+     
+    </div>
+  </div>
+</div>
+
+        <div class="form-group">
+          <div class="ibox float-e-margins">
+            <div class="ibox-title">
+              <h5>文章类型</h5>
+              <div class="ibox-tools">
+                <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                </a>
+                <a class="close-link"><i class="fa fa-times"></i></a>
+              </div>
+            </div>
+            <div class="ibox-content" style="display: block;">
+             
+            </div>
+          </div>
+        </div>
+
+          <div class="form-group">
+            <div class="ibox float-e-margins">
+              <div class="ibox-title">
+                <h5>评论开关</h5>
+                <div class="ibox-tools">
+                  <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                  </a>
+                  <a class="close-link"><i class="fa fa-times"></i></a>
+                </div>
+              </div>
+              <div class="ibox-content" style="display: block;">
+          
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="ibox float-e-margins">
+              <div class="ibox-title">
+                <h5>顶置级别</h5>
+                <div class="ibox-tools">
+                  <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                  </a>
+                  <a class="close-link"><i class="fa fa-times"></i></a>
+                </div>
+              </div>
+              <div class="ibox-content" style="display: block;">
+          
+              </div>
+            </div>
+          </div>
+
+<div class="form-group">
+  <div class="ibox float-e-margins">
+    <div class="ibox-title">
+      <h5>缩略图</h5>
+      <div class="ibox-tools">
+        <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link"><i class="fa fa-times"></i></a>
+      </div>
+    </div>
+    <div class="ibox-content" style="display: block;">
+    
+    </div>
+  </div>
+</div>
+
+        </div>
+      </form>
+      </div>
+    </div>
+
+    <script src="ckeditor.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script>
+      let editor;
+      ClassicEditor.create(document.querySelector("#editor"), {
+        // toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
+        /*   ckfinder: {
+                uploadUrl: '/admin.php/Common/ck_editor?command=QuickUpload&type=Files&responseType=json'
+            } */
+      })
+        .then(myEditor => {
+          editor = myEditor;
+          window.editor = myEditor;
+        })
+        .catch(err => {
+          console.error(err.stack);
+        });
+      document.querySelector("#submit").addEventListener("click", () => {
+        const editorData = editor.getData();
+        alert(editorData);
+      });
+    </script>
+  </body>
+</html>

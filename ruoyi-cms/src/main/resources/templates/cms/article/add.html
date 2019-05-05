@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header('添加文章')"></head>
+<link type="text/css" href="/ckeditor5/sample/css/sample.css"
+	rel="stylesheet" media="screen" />
+<link type="text/css" href="/ckeditor5/style.css" rel="stylesheet"
+	media="screen" />
+<link
+	href="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.bootcss.com/bootstrap-select/1.13.9/css/bootstrap-select.min.css"
+	rel="stylesheet">
+<style>
+.ck-editor__main {
+	height: 740px;
+}
+
+.ck-editor__editable {
+	min-height: 740px;
+}
+
+.keyinput>.bootstrap-tagsinput {
+	width: 100%;
+}
+
+.keyinput input {
+	width: 150px;
+}
+
+.tagView input {
+	display: none;
+}
+
+.tagView .bootstrap-tagsinput {
+	padding: 0;
+}
+
+.opshow {
+	opacity: 1;
+}
+
+.ophide {
+	opacity: 0.5;
+}
+
+.aimg>img {
+	width: 100px;
+	height: 100px;
+}
+</style>
+<body class="white-bg">
+	<h1 style="display: inline-block;">文章编辑</h1>
+	<form class="form-horizontal m" id="form-article-add">
+		<div class="row" style="padding: 10px">
+			<div class="col-md-9">
+				<!--   标题 -->
+				<div class="form-group">
+					<div class="col-sm-12">
+						<input class="form-control" type="text" name="articleTitle" id="articleTitle"
+							placeholder="文章标题" />
+					</div>
+				</div>
+				<!-- 固定链接|保存 -->
+				<div class="form-group">
+					<div class="row" style="padding-left: 15px; padding-right: 15px">
+						<div class="col-sm-12">
+							<div style="display: block;">
+								<span> 固定链接： <a href="javascript:void(0)"><span
+										th:text=${T(com.ruoyi.cms.util.Contests).BASIC_ARTICLE_URL}></span><span
+										id="articleUrl"></span> <input type="hidden" name="articleUrl">
+								</a> <span class="btn btn-default btn-sm " id="btn_input_articleUrl"
+									style="">编辑</span> <span class="btn btn-default btn-sm "
+									id="btn_change_articleUrl" onclick="urlOnBlurAuto()"
+									style="display: none;">确定</span>
+								</span>
+								<div style="float: right">
+									<div class="btn-group" role="group" >
+										<span  class="btn btn-default">草稿</span>
+										<span  class="btn btn-default" >本地缓存</span>
+										<span  class="btn btn-default" id="addOk">保存</span>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+				<!-- 关键词 -->
+				<div class="form-group">
+					<div class="col-sm-12 keyinput">
+						<input class="form-control" type="text" name="keyword"
+							id="articleKey" placeholder="关键词" />
+					</div>
+				</div>
+				<!-- 内容 -->
+				<div class="form-group">
+					<div class="col-sm-12">
+						<input type="hidden" name="articleContent" id="articleContent">
+						<div id="editor">
+							<h2>The three greatest things you learn from traveling</h2>
+							<p>Like all the great things on earth traveling teaches us by
+								example. Here are some of the most precious lessons I’ve learned
+								over the years of traveling.</p>
+
+							<h3>Appreciation of diversity</h3>
+
+							<p>
+								Getting used to an entirely different culture can be
+								challenging. While it’s also nice to learn about cultures online
+								or from books, nothing comes close to experiencing <a
+									href="https://en.wikipedia.org/wiki/Cultural_diversity">cultural
+									diversity</a> in person. You learn to appreciate each and every
+								single one of the differences while you become more culturally
+								fluid.
+							</p>
+							<h3>Confidence</h3>
+
+							<p>Going to a new place can be quite terrifying. While change
+								and uncertainty makes us scared, traveling teaches us how
+								ridiculous it is to be afraid of something before it happens.
+								The moment you face your fear and see there was nothing to be
+								afraid of, is the moment you discover bliss.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<!-- 分类 -->
+				<div class="form-group">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>选择分类</h5>
+							<div class="ibox-tools">
+								<a class="close-link"><i class="fa fa-question-circle"
+									title="选择分类"></i></a> <a class="collapse-link"><i
+									class="fa fa-chevron-up"></i> </a>
+							</div>
+						</div>
+						<div class="ibox-content" style="display: block;">
+							<ul>
+								<li class="tagView"><input class="form-control" type="text"
+									name="cats" id="catInput" /></li>
+								<li>
+									<div class="input-group" style="padding-top: 10px">
+										<input class="form-control" type="text"
+											onclick="selectCatTree()" id="treeName" readonly
+											th:value="${catName}"> <span
+											class="input-group-addon"><i class="fa fa-search"></i></span>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- 标签 -->
+				<div class="form-group">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>选择标签</h5>
+							<div class="ibox-tools">
+								<a class="close-link"><i class="fa fa-question-circle"
+									title="最多选择3个标签"></i></a> <a class="add-link" onclick="addTag()"><i
+									class="fa fa-plus-circle" title="添加标签"></i></a> <a
+									class="collapse-link"><i class="fa fa-chevron-up"></i> </a>
+							</div>
+						</div>
+						<div class="ibox-content" style="display: block;">
+							<ul>
+								<li class="tagView"><input class="form-control" type="text"
+									name="tags" id="tagInput" /></li>
+								<li style="padding-top: 10px"><select
+									class="selectpicker show-tick form-control"
+									data-live-search="true" id="chooseTag" name="chooseTag"
+									title="选择标签">
+								</select></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- 类型 -->
+				<div class="form-group">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>文章类型</h5>
+							<div class="ibox-tools">
+								<a class="collapse-link"><i class="fa fa-chevron-up"></i> </a> <a
+									class="close-link"><i class="fa fa-times"></i></a>
+							</div>
+						</div>
+						<div class="ibox-content" style="display: block;">
+							<label class="radio-inline"> <input type="radio"
+								name="articleType" checked value="0"> 博客
+							</label> <label class="radio-inline"> <input type="radio"
+								name="articleType" value="1"> 教程
+							</label> <label class="radio-inline"> <input type="radio"
+								name="articleType" value="2"> 图集
+							</label> <label class="radio-inline"> <input type="radio"
+								name="articleType" value="3"> 问答
+							</label> <label class="radio-inline"> <input type="radio"
+								name="articleType" value="4"> 投票
+							</label>
+
+						</div>
+					</div>
+				</div>
+				<!-- 评论 -->
+				<div class="form-group">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>评论开关</h5>
+							<div class="ibox-tools">
+								<a class="collapse-link"><i class="fa fa-chevron-up"></i> </a> <a
+									class="close-link"><i class="fa fa-times"></i></a>
+							</div>
+						</div>
+						<div class="ibox-content" style="display: block;">
+							<label class="radio-inline"> <input type="radio" checked
+								name="allowComment" value="1"> 开启
+							</label> <label class="radio-inline"> <input type="radio"
+								name="allowComment" value="0"> 关闭
+							</label>
+						</div>
+					</div>
+				</div>
+				<!-- 评论 -->
+				<div class="form-group">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>转载链接</h5>
+							<div class="ibox-tools">
+								<a class="close-link"><i class="fa fa-question-circle"
+									title="文章来源，不填则为原创"></i></a> <a class="collapse-link"><i
+									class="fa fa-chevron-up"></i> </a>
+							</div>
+						</div>
+						<div class="ibox-content" style="display: block;">
+							<input class="form-control" type="text" name="reprintUrl"
+								id="reprintUrl" />
+						</div>
+					</div>
+				</div>
+				<!-- 缩略图 -->
+				<input type="hidden" name="articleImg" id="articleImg">
+				<!-- 文章概况 -->
+				<input type="hidden" id="summary" name="articleSummary" />
+
+			</div>
+		</div>
+	</form>
+
+	<th:block th:include="include :: footer" />
+	<script src="/ckeditor5/ckeditor.js"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap-select/1.13.9/js/bootstrap-select.min.js"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+	<!-- <script src="https://cdn.bootcss.com/bootstrap-select/1.13.9/js/i18n/defaults-zh_CN.min.js"></script> -->
+	<script type="text/html" id="okAdd">
+    <div class="form-group" style="padding-top:20px">
+			<label class="col-sm-2 control-label">文章预览</label>
+			<div class="col-sm-10">
+				<textarea class="form-control" rows="3" id="articleSummary" placeholder="文章预览"></textarea>
+			</div>
+		</div>
+    
+   <div class="form-group" style="padding-top:80px">
+			<label class="col-sm-2 control-label">选择封面</label>
+			<div class="col-sm-10 aimg" >   
+			</div>  
+    </div>
+    <div class="form-group text-center">
+			<button type="button" class="btn btn-primary" id="saveArticle">保存文章</button>
+	</div>
+
+    </script>
+	<script type="text/html" id="addModel">
+     <form class="form-horizontal m" id="form-tag-add" >	
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签名</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="tagName" id="tagName"
+					placeholder="标签名" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签路径</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="tagUrl"
+					placeholder="标签路径" >
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签描述</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="remark"
+					placeholder="标签描述">
+			</div>
+		</div>
+		<div class="form-group text-center">
+			<button type="button" class="btn btn-primary" onclick="submitHandler()">保存</button>
+		</div>
+		</form>
+		</script>
+
+	<script>
+      let editor;
+      ClassicEditor.create(document.querySelector("#editor"), {
+          ckfinder: {
+                uploadUrl: '/cms/article/articleImg'
+            } 
+      })
+        .then(myEditor => {
+          editor = myEditor;
+          window.editor = myEditor;
+        })
+        .catch(err => {
+          console.error(err.stack);
+        });
+      $("#addOk").click(function() {	  
+    	 if($("input[name='cats']").val()===''){
+			  layer.msg('请选择一个分类',{icon:6})
+		  }	
+      else if($.validate.form("form-article-add"))
+          {
+        const editorData = editor.getData();
+        layer.open({
+        	  title:"确认信息",
+        	  area:['600px','400px'],
+        	  type: 1,       	  
+        	  content: $("#okAdd").html(),
+        	  success:function(){
+        		  //填充图片
+        		 var imgs=chooseImg(editorData);
+        		  if(imgs.length>0)
+        			  {
+        			  $.each(imgs,function(i,val){
+        				  $(".aimg").append("<img class='ophide' src='"+val+"' />")		  
+        			  })		  
+        			  }
+        		  
+        		  //填充描述
+        		  $("#articleSummary").val(chooseSummary(editorData).slice(0,160));
+        		  //初始化选择事件
+        		  $(".aimg>img").click(function(){			  
+        			  if($(this).hasClass("opshow"))
+        		       {$(this).removeClass("opshow");
+        		       $(this).addClass("ophide");
+        				  return ;
+        		       }
+        			  if($(this).hasClass("ophide")&&$(".opshow").length<3)
+        			  {
+        				  $(this).removeClass("ophide");
+           		          $(this).addClass("opshow");
+           		          return ;
+        			  }
+        			  else{
+        				  layer.msg('最多选择3张',{icon:6})
+        			  }		  
+        		  });
+        		  //初始化提交
+        		   $("#saveArticle").click(function(){ 
+        			  $("#articleImg").val(getImgSrc($(".opshow")).toString());
+        			  $("#summary").val($("#articleSummary").val());
+        			  $("#articleContent").val(editorData);
+        			  $.operate.saveTab("/cms/article/add", $('#form-article-add').serialize());  
+        		      layer.closeAll();
+        		   });
+        	  }			 
+        	});	    
+        }
+      else{
+    	  layer.msg('表单验证未通过', {icon: 6});
+      }
+      });
+           
+      function getImgSrc(dom){
+    	   var srcs=[];
+    	   $.each(dom, function(i,val){    
+    	      srcs.push($(this).attr("src"))
+    	  });  
+    	return srcs;  
+      }
+       
+     function chooseImg(str){ 
+    	    var data=[]
+    	    //获取img标签
+    	    var imgReg = /<img.*?(?:>|\/>)/gi;
+    	    //匹配src属性
+    	    var srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
+    	    var arr = str.match(imgReg);
+    	    if(arr==null)
+    	    	{return data;}
+    	    for (var i = 0; i < arr.length; i++) {
+    	     var src = arr[i].match(srcReg);
+    	     //获取图片地址
+    	     if(src[1]){
+    	     data.push(src[1]);
+    	     }
+    	    } 	 
+     return data;   	 
+     }
+     
+     function chooseSummary(html){ 	
+    	 html = html.replace(/<\/?[^>]*>/g,''); //去除HTML tag
+    	 html = html.replace(/[ | ]*\n/g,'\n'); //去除行尾空白
+    	 html = html.replace(/ /ig,'');//去掉  	 
+    	 return html;	 
+     }
+     
+      
+      
+    </script>
+
+	<script type="application/javascript" id="footer_script">
+//自动填充url		
+function autoComplateUrl() {
+    var articleUrl = $("#articleUrl");
+    if (articleUrl.html() === '') {
+    	var g=new Date().getTime();
+        articleUrl.html(g);
+        $("input[name='articleUrl']").val(g);
+    }
+}
+//初始化填充
+autoComplateUrl();
+/**
+* 检测是否已经存在该链接
+* @constructor
+*/
+function urlOnBlurAuto() {
+    var newArticleUrl = $('#newArticleUrl');
+    if (newArticleUrl.val() === "") {
+    	layer.msg('不能为空！', {icon: 6}); 
+        return;
+    }
+    $.post('/cms/article/checkArticleUrl', {
+        'articleUrl': newArticleUrl.val()
+    },function(data) {
+        if (data===1) {
+        	layer.msg('地址重复', {icon: 6}); 
+            return;
+        } else {
+        	layer.msg('修改成功', {icon: 6}); 
+            $('#articleUrl').html(newArticleUrl.val());
+            $("input[name='articleUrl']").val(newArticleUrl.val());
+            $('#btn_change_articleUrl').hide();
+            $('#btn_input_articleUrl').show();
+        }
+    },
+    'JSON')
+}
+$('#btn_input_articleUrl').click(function() {
+    var articleUrl = $("#articleUrl");
+    articleUrl.html("<input type='text' id='newArticleUrl' onblur='urlOnBlurAuto()' value='" + articleUrl.html() + "'>");
+    $(this).hide();
+    $('#btn_change_articleUrl').show();
+});
+	</script>
+
+	<script>
+        var prefix = ctx + "cms/article"; 
+       
+        $("#form-article-add").validate({
+        	 errorPlacement: function(error, element) {
+        		 layer.tips(error.html(),element,{tipsMore: true}); 
+        	    },
+        	
+        	rules:{
+        		articleType:{
+        			required:true
+        		},
+        		reprintUrl:{
+        			url:true
+        		},
+        		articleTitle:{			
+        			required:true,
+        			remote : {
+    					url : "/cms/article/checkArticleTitle",
+    					type : "post",
+    					dataType : "json",
+    					data : {
+    						"articleTitle" : function() {
+    							if($("#catInput").val().length!=null)
+    								{
+    							return $.common.trim($(
+    									"#articleTitle").val());
+    								}
+    							else {
+    								layer.msg('类别未选', {
+    									  icon: 1,
+    									  time: 1000 //2秒关闭（如果不配置，默认是3秒）
+    									}, function(){
+    										layer.closeAll();
+    									});
+    								return ;
+    							}
+    						}
+    					},
+    					dataFilter : function(data, type) {
+    						return $.validate.unique(data);
+    					}
+    				}
+        	    }
+        		},
+        		messages : {
+					"articleTitle" : {
+						remote : "标题已经存在"
+					}
+        		},
+            focusCleanup: true
+        });
+        
+      /*   function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/add", $('#form-menu-add').serialize());
+	        }
+	    } */
+
+
+        /*文章管理-新增-选择类目树*/
+        function selectCatTree() {
+        	var treeId = $("#treeId").val();
+        	var catId = treeId > 0 ? treeId : 1;
+        	var url = prefix+"/selectCatTree/" + catId;
+			var options = {
+				title: '类目选择',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+		
+		function doSubmit(index, layero){
+			var body = layer.getChildFrame('body', index);
+			var catId=body.find('#treeId').val();
+			var catName=body.find('#treeName').val();
+   			$("#treeName").val(catName);
+   			$('#catInput').tagsinput('removeAll');
+   		    $("#catInput").tagsinput('add',{'catId':catId,'catName':catName});
+   			layer.close(index);
+		};
+		 $("#tagInput").tagsinput({
+			 maxTags: 3,
+			 itemValue: 'tagId',
+			 itemText: 'tagName'
+		 });
+		 $("#catInput").tagsinput({
+			 maxTags: 1,
+			 itemValue: 'catId',
+			 itemText: 'catName'
+		 });
+		 $("#articleKey").tagsinput({
+			 maxTags: 10
+		 });
+		 
+		
+		 $("#chooseTag").change(function(){
+			 var k=$(this).val();
+			 var n=$(this).find("option:selected").text().split("(")[0];		
+			 if(n!="")
+				 {
+			 $("#tagInput").tagsinput('add',{'tagId':k,'tagName':n});
+				 }	 
+			
+		 });
+		 $(window).on('load', function () {
+		     $('#chooseTag').selectpicker();
+		     getTag();
+		        
+		});
+		 function addTag() {
+				layer.open({
+					title : "添加标签",
+					type : 1,
+					content : $("#addModel").html(),
+					success : function() {
+						$("#form-tag-add").validate(
+								{
+									rules : {
+										tagName : {
+											remote : {
+												url : "/cms/tag/checkTagNameUnique",
+												type : "post",
+												dataType : "json",
+												data : {
+													"tagName" : function() {
+														return $.common.trim($(
+																"#tagName").val());
+													}
+												},
+												dataFilter : function(data, type) {
+													return $.validate.unique(data);
+												}
+											}
+										}
+									},
+									messages : {
+										"tagName" : {
+											remote : "标签名已经存在"
+										}
+									},
+									focusCleanup : true
+								});
+					}
+				});
+			};
+
+			function submitHandler() {
+				if ($.validate.form("form-tag-add")) {
+					$.post("/cms/tag/add", $('#form-tag-add').serialize(), function(
+							data) {
+						if (data.code === 0) {
+							layer.msg('添加成功', {
+								  icon: 1,
+								  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+								}, function(){
+									getTag();
+									layer.closeAll();
+								});   
+
+						} else {
+							layer.msg('添加失败', {
+								  icon: 1,
+								  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+								}, function(){
+									layer.closeAll();
+								}); 
+						}
+
+					});
+				}
+			};
+		
+			function getTag(){
+				$.post("/cms/tag/list",function(data,status){
+				
+			       $("#chooseTag").empty();
+			       $.each(data.data,function(i,e){//i是索引，e是json对象
+			    	   $("#chooseTag").append("<option value="+e.tagId+">"+e.tagName+"("+e.tagCount+")</option>");
+			             });
+			       $("#chooseTag").selectpicker("refresh");
+			 });	
+			}
+    </script>
+
+
+
+</body>
+</html>

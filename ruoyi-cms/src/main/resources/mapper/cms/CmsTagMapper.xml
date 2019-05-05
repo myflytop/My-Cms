@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cms.mapper.CmsTagMapper">
+	<resultMap id="BaseResultMap"
+		type="com.ruoyi.cms.model.po.CmsTag">
+		<id column="tag_id" property="tagId" jdbcType="INTEGER" />
+		<result column="tag_count" property="tagCount"
+			jdbcType="INTEGER" />
+		<result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy"
+			jdbcType="BIGINT" />
+		<result column="create_time" property="createTime"
+			jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="update_by" property="updateBy"
+			jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="tag_url" property="tagUrl" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		tag_id,tag_count ,tag_name, create_by, create_time, remark,
+		update_by, update_time,
+		tag_url
+	</sql>
+	<select id="getCmsTagById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from cms_tag
+		where tag_id = #{tagId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteCmsTagById" parameterType="java.lang.Integer">
+		delete from cms_tag
+		where tag_id = #{tagId,jdbcType=INTEGER}
+	</delete>
+	<select id="listCmsTag"
+		parameterType="com.ruoyi.cms.model.po.CmsTag"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from cms_tag
+		<where>
+			<if test="tagName!=null">
+				AND tag_name like concat('%', #{tagName}, '%')
+			</if>
+		</where>
+	</select>
+
+	<insert id="insertCmsTag"
+		parameterType="com.ruoyi.cms.model.po.CmsTag" useGeneratedKeys="true" keyProperty="tagId">
+		insert into cms_tag (tag_name,
+		create_by,
+		create_time, remark,tag_url)
+		values
+		(
+		#{tagName,jdbcType=VARCHAR},
+		#{createBy,jdbcType=TIMESTAMP},
+		sysdate(),
+		#{remark,jdbcType=VARCHAR},#{tagUrl,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertCmsTagSelective"
+		parameterType="com.ruoyi.cms.model.po.CmsTag">
+		insert into cms_tag
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="tagId != null">
+				tag_id,
+			</if>
+			<if test="tagCount != null">
+				tag_count,
+			</if>
+			<if test="tagName != null">
+				tag_name,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="tagUrl != null">
+				tag_url,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tagId != null">
+				#{tagId,jdbcType=INTEGER},
+			</if>
+			<if test="tagCount != null">
+				#{tagCount,jdbcType=INTEGER},
+			</if>
+			<if test="tagName != null">
+				#{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tagUrl != null">
+				#{tagUrl,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateCmsTagById"
+		parameterType="com.ruoyi.cms.model.po.CmsTag">
+		update cms_tag
+		<set>
+			<if test="tagName != null">
+				tag_name = #{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="tagCount != null">
+				tag_count = #{tagCount,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="true">
+				update_time = sysdate(),
+			</if>
+			<if test="tagUrl != null">
+				tag_url = #{tagUrl,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where tag_id = #{tagId,jdbcType=INTEGER}
+	</update>
+	
+	<select id="checkTagNameUnique" resultType="int">
+	select count(1) from cms_tag where <if test="tagId!=null">tag_id not in(#{tagId}) and</if> tag_name=#{tagName}
+	</select>
+	
+	<insert id="insertCmsArticleTags">
+	<if test="tags.length>0">
+		insert into cms_article_tag(article_id,tag_id)
+		values <foreach collection="tags" separator="," item="tagId">
+		(#{articleId},#{tagId})</foreach>
+    </if>
+	</insert>
+	
+	<select id="listTagIds" resultType="int" parameterType="long">
+		select tag_id from cms_article_tag
+		where article_id=#{articleId}
+	</select>
+	<select id="listTags" resultType="string" parameterType="long">
+		select CONCAT(tag_id,"_",tag_name) from cms_tag where tag_id in (select tag_id from cms_article_tag
+		where article_id=#{articleId})
+	</select>
+	
+	<delete id="deleteArticleTagByIds" parameterType="Long">
+	delete from cms_article_tag where article_id in (
+	<foreach collection="articleIds" separator="," item="articleId">
+		#{articleId}</foreach>
+	)
+	</delete>
+	<delete id="removeArticleTag">
+	delete from cms_article_tag where article_id=#{articleId} and tag_id=#{tagId}
+	</delete>
+	
+	<insert id="insertArticleTag">
+	insert into cms_article_tag(article_id,tag_id) values(#{articleId},#{tagId})
+	</insert>
+</mapper>

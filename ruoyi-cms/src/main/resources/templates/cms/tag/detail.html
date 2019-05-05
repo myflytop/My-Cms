@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header('标签详情')"></head>
+<body class="white-bg" >
+	<div class="wrapper wrapper-content">
+		<div class="col-sm-12">
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<div class="ibox float-e-margins" style="border:none;padding:0">
+						<div class="ibox-content" style="border:none;padding:0">
+							<table class="table table-hover no-margins" >
+								<thead>
+									<tr>
+										<th>属性</th>
+										<th>值</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>标签ID</td>
+										<td th:text="${tag.tagId}">1</td>
+									</tr>
+									<tr>
+										<td>标签名</td>
+										<td th:text="${tag.tagName}">标签名</td>
+									</tr>
+									<tr>
+										<td>标签地址</td>
+										<td th:text="${tag.tagUrl}">/url</td>
+									</tr>
+									<tr>
+										<td>标签统计</td>
+										<td th:text="${tag.tagCount}">100</td>
+									</tr>
+									<tr>
+										<td>创建人</td>
+										<td th:text="${tag.createBy}">0%</td>
+									</tr>
+									<tr>
+										<td>创建时间</td>
+										<td th:text="${#dates.format(tag.createTime,'yyyy-MM-dd HH:mm:ss')}">0%</td>
+									</tr>
+									<tr>
+										<td>修改人</td>
+										<td th:text="${tag.updateBy}">0%</td>
+									</tr>
+									<tr>
+										<td>修改时间</td>
+										<td th:text="${#dates.format(tag.updateTime,'yyyy-MM-dd HH:mm:ss')}">0%</td>
+									</tr>
+									<tr>
+										<td>标签备注</td>
+										<td th:text="${tag.remark}">0%</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<div th:include="include :: footer"></div>
+</html>

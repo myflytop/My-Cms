@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header('修改分类')"></head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-cat-edit" th:object="${cmsCat}">
+			<input id="treeId" name="parentId" type="hidden" th:field="*{parentId}" />
+			<div class="form-group">
+				<label class="col-sm-3 control-label ">上级类目：</label>
+				<div class="col-sm-8">
+				    <div class="input-group">
+					    <input class="form-control" type="text" onclick="selectcatTree()" id="treeName" readonly th:value="${parentName}">
+				        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+				    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="catName" th:field="*{catName}"  required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目Id</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="catId" th:field="*{catId}"  readonly>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目路径</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="catUrl" th:field="*{catUrl}" id="catUrl" >
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目排序：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="orderNo" th:field="*{orderNo}" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目备注：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text"  name="remark" th:field="*{remark}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目图标：</label>
+				<div class="col-sm-8">
+					<input id="icon" name="catIcon" class="form-control" th:field="*{catIcon}" type="text" placeholder="选择图标">
+                    <div class="ms-parent" style="width: 100%;">
+                        <div class="icon-drop animated flipInX" style="display: none;max-height:200px;overflow-y:auto">
+                            <div data-th-include="system/menu/icon"></div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">类目状态：</label>
+				<div class="col-sm-8">
+				    <label class="radio-box"> <input type="radio" name="visible" value="1" th:checked="*{visible==1}"/> 显示 </label> 
+					<label class="radio-box"> <input type="radio" name="visible" value="0" th:checked="*{visible==0}"> 隐藏 </label> 
+				</div>
+			</div>
+		</form>
+	</div>
+	<div th:include="include::footer"></div>
+	 <script>
+        var prefix = ctx + "cms/cat";       
+        $("#form-cat-edit").validate({
+        	rules:{
+        		openType:{
+        			required:true,
+        		},
+        		isParent:{
+        			required:true,		
+        		},
+        		openType:{
+        			required:true,		
+        		},
+        		orderNo:{
+        			digits:true
+        		},
+        		catName:{
+        			remote: {
+                        url: prefix + "/checkCatNameUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                        	"parentId": function() {
+		                		return $("input[name='parentId']").val();
+		                    },
+                        	"catName" : function() {
+                                return $.common.trim($("#catName").val());
+                            },
+                            "catId" :$("input[name='catId']").val()
+                        },
+                        dataFilter: function(data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        	},
+        	messages: {
+                "catName": {
+                    remote: "类目已经存在"
+                }
+            },
+            focusCleanup: true
+        });
+        
+        function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-cat-edit').serialize());
+	        }
+	    }
+
+        $(function() {
+        	$("input[name='catIcon']").focus(function() {
+                $(".icon-drop").show();
+            });
+        	$("#form-cat-edit").click(function(event) {
+        	    var obj = event.srcElement || event.target;
+        	    if (!$(obj).is("input[name='catIcon']")) {
+        	    	$(".icon-drop").hide();
+        	    }
+        	});
+        	$(".icon-drop").find(".ico-list i").on("click", function() {
+        		$('#icon').val($(this).attr('class'));
+            });
+         
+        });
+
+        /*菜单管理-新增-选择菜单树*/
+        function selectcatTree() {
+        	var treeId = $("#treeId").val();
+        	var menuId = treeId > 0 ? treeId : 1;
+        	var url = prefix + "/selectCatTree/" + menuId;
+			var options = {
+				title: '类目选择',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+		
+		function doSubmit(index, layero){
+			var body = layer.getChildFrame('body', index);
+   			$("#treeId").val(body.find('#treeId').val());
+   			$("#treeName").val(body.find('#treeName').val());
+   			layer.close(index);
+		}
+    </script>
+</body>
+</html>

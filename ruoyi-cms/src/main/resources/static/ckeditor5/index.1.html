@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <link
+      type="text/css"
+      href="sample/css/sample.css"
+      rel="stylesheet"
+      media="screen"
+    />
+    <link
+      href="https://cdn.bootcss.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>CKEditor 5 – classic editor build sample</title>
+  </head>
+  <body class="white-bg">
+    <div class="container-div">
+      <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-cat-add">
+          <input
+            id="treeId"
+            name="parentId"
+            type="hidden"
+            th:value="${parentId}"
+          />
+          <div class="form-group">
+            <label class="col-sm-3 control-label ">选择类目：</label>
+            <div class="col-sm-3">
+              <div class="input-group">
+                <input
+                  class="form-control"
+                  type="text"
+                  onclick="selectcatTree()"
+                  id="treeName"
+                  readonly="true"
+                />
+                <span class="input-group-addon"
+                  ><i class="fa fa-search"></i
+                ></span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">文章类型：</label>
+            <div class="col-sm-3">
+              <label class="radio-box">
+                <input type="radio" name="articleType" value="1" /> 转载
+              </label>
+              <label class="radio-box">
+                <input type="radio" name="articleType" value="0" checked /> 原创
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">文章标题：</label>
+            <div class="col-sm-5">
+              <input
+                class="form-control"
+                type="text"
+                name="catName"
+                id="catName"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">顶置级别：</label>
+            <div class="col-sm-1">
+              <input class="form-control" type="text" name="orderNo" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">文章备注：</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="text" name="remark" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">文章内容：</label>
+            <div class="col-sm-8">
+              <div id="editor">
+                <h2>The three greatest things you learn from traveling</h2>
+                <p>
+                  Like all the great things on earth traveling teaches us by
+                  example. Here are some of the most precious lessons I’ve
+                  learned over the years of traveling.
+                </p>
+
+                <h3>Appreciation of diversity</h3>
+
+                <p>
+                  Getting used to an entirely different culture can be
+                  challenging. While it’s also nice to learn about cultures
+                  online or from books, nothing comes close to experiencing
+                  <a href="https://en.wikipedia.org/wiki/Cultural_diversity"
+                    >cultural diversity</a
+                  >
+                  in person. You learn to appreciate each and every single one
+                  of the differences while you become more culturally fluid.
+                </p>
+
+                <figure class="image image-style-side">
+                  <img
+                    src="sample/img/umbrellas.jpg"
+                    alt="Three Monks walking on ancient temple."
+                  />
+                  <figcaption>
+                    Leaving your comfort zone might lead you to such beautiful
+                    sceneries like this one.
+                  </figcaption>
+                </figure>
+
+                <h3>Confidence</h3>
+
+                <p>
+                  Going to a new place can be quite terrifying. While change and
+                  uncertainty makes us scared, traveling teaches us how
+                  ridiculous it is to be afraid of something before it happens.
+                  The moment you face your fear and see there was nothing to be
+                  afraid of, is the moment you discover bliss.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">类目图册：</label>
+            <div class="col-sm-8">
+              <input
+                id="icon"
+                name="catIcon"
+                class="form-control"
+                type="text"
+                placeholder="选择图标"
+              />
+              <div class="ms-parent" style="width: 100%;">
+                <div
+                  class="icon-drop animated flipInX"
+                  style="display: none;max-height:200px;overflow-y:auto"
+                >
+                  <div data-th-include="system/menu/icon"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <main>
+        <div class="message">
+          <div class="centered">
+            <h1>Congratulations!</h1>
+
+            <p>
+              If you can see CKEditor below, it means that the installation
+              succeeded. You can now try out your new editor version, see its
+              features, and check some of the most useful
+              <a href="#references">resources recommended below</a>.
+            </p>
+          </div>
+        </div>
+
+        <button id="submit">vvvv</button>
+      </main>
+
+      <footer>
+        <div>
+          <p>
+            CKEditor 5 – The text editor for the Internet –
+            <a href="https://ckeditor.com/ckeditor-5"
+              >https://ckeditor.com/ckeditor-5</a
+            >
+          </p>
+          <p>
+            Copyright © 2003-2019,
+            <a href="https://cksource.com/">CKSource</a> – Frederico Knabben.
+            All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+    <script src="ckeditor.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script>
+      let editor;
+      ClassicEditor.create(document.querySelector("#editor"), {
+        // toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
+        /*   ckfinder: {
+                uploadUrl: '/admin.php/Common/ck_editor?command=QuickUpload&type=Files&responseType=json'
+            } */
+      })
+        .then(myEditor => {
+          editor = myEditor;
+          window.editor = myEditor;
+        })
+        .catch(err => {
+          console.error(err.stack);
+        });
+      document.querySelector("#submit").addEventListener("click", () => {
+        const editorData = editor.getData();
+        alert(editorData);
+      });
+    </script>
+  </body>
+</html>

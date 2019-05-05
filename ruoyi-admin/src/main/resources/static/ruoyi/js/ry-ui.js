@@ -41,6 +41,7 @@
         		};
             	var options = $.extend(defaults, options);
                 $.table._option = options;
+                $.table.initEvent();
                 $('#' + options.id).bootstrapTable({
                     url: options.url,                                   // 请求后台的URL（*）
                     contentType: "application/x-www-form-urlencoded",   // 编码类型
@@ -104,10 +105,8 @@
                     return { rows: [], total: 0 };
                 }
             },
-            // 当所有数据被加载时触发
-            onLoadSuccess: function(data) {
-            	// 浮动提示框特效
-            	$("[data-toggle='tooltip']").tooltip();
+            // 初始化事件
+            initEvent: function(data) {
             	// 触发行点击事件 加载成功事件
             	$("#" + $.table._option.id).on("check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table load-success.bs.table", function () {
             		// 工具栏按钮控制

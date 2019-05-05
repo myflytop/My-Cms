@@ -1,0 +1,47 @@
+fs:
+    dir: EasyFS/
+    nginxUrl: http://localhost:80/
+    useNginx: false
+    useSm: true
+    uuidName: false
+    #基本目录
+    basicDir: /EasyFS
+    #是否保存在工作目录
+    useLocation: true
+    #uuid是否开启 图片
+    useuuId: true
+    #uuid是否开启 非图片
+    useuuIdo: false
+    #uuid是否开启时间路径 图片
+    useTimeDir: true
+    #uuid是否开启时间路径 非图片
+    useTimeDiro: false
+    #启用验证
+    openVlid: true
+    #缩略图地址(如果为空 则不生成)
+    thumbnailsDir: /ru/ 
+    #允许上传的类型及编码对照
+    allowType: {255044462D312E: pdf,89504E47: png,47494638: gif,000001BA: mpg,
+                6D6F6F76: mov,504B0304: zip,1F8B08: gz,FFD8FF: jpg,49443303: mp3,
+                4D546864: mid,41564920: avi,52617221: rar,000001B3: mpg,D0CF11E0: xls,
+}
+    #生成文件夹规则
+    fileRule: {jpg: img,zip: reduce,xlsx: doc,rar: reduce,gif: img,
+               mpg: video,png: img,mid: audio,docx: doc,mp4: video,
+               mp3: audio,pdf: doc,gz: reduce,avi: video,mov: video,
+               doc: doc,xls: doc}
+logging:
+    level:
+        com:
+            wf:
+                easyfs: DEBUG
+server:
+    port: 8081
+spring:
+    jackson:
+        date-format: yyyy/MM/dd HH:mm:ss
+        time-zone: GMT+8
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.cms.mapper.CmsArticleMapper">
+	<resultMap id="BaseResultMap"
+		type="com.ruoyi.cms.model.po.CmsArticle">
+		<id column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="article_title" property="articleTitle"
+			jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy"
+			jdbcType="INTEGER" />
+		<result column="create_time" property="createTime"
+			jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy"
+			jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="article_type" property="articleType"
+			jdbcType="TINYINT" />
+		<result column="article_build" property="articleBuild"
+			jdbcType="TINYINT" />
+		<result column="article_top" property="articleTop"
+			jdbcType="TINYINT" />
+		<result column="article_img" property="articleImg"
+			jdbcType="VARCHAR" />
+		<result column="article_summary" property="articleSummary"
+			jdbcType="VARCHAR" />
+			<result column="article_url" property="articleUrl"
+			jdbcType="VARCHAR" />
+			<result column="reprint_url" property="reprintUrl"
+			jdbcType="VARCHAR" />
+		<result column="visible" property="visible" jdbcType="BIT" />
+		<result column="allow_comment" property="allowComment"
+			jdbcType="BIT" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="article_content" property="articleContent" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<!-- 所有字段 -->
+	<sql id="All_Column_List">
+		article_id, article_title, create_by, create_time, update_by, update_time,
+		article_type,article_url,
+		article_build, article_top, article_img, article_summary, visible, allow_comment,
+		keyword, reprint_url,CAST(article_content AS CHAR) AS article_content
+	</sql>
+
+	<!-- 基本字段字 不含article_content -->
+	<sql id="NotCon_Column_List">
+		article_id, article_title, create_by, create_time, update_by, update_time,
+		article_type,article_url,
+		article_build, article_top, article_img, article_summary, visible, allow_comment,
+		keyword, reprint_url
+	</sql>
+
+	<!-- 基本字段字 -->
+	<sql id="Basic_Column_List">
+		article_id, article_title, create_by, create_time, update_by, update_time,
+		article_type,
+		article_build, article_top, article_img, article_summary, visible, allow_comment,
+		keyword, reprint_url
+	</sql>
+
+
+
+	<insert id="insertCmsArticle"
+		parameterType="com.ruoyi.cms.model.po.CmsArticle" useGeneratedKeys="true" keyProperty="articleId">
+		insert into cms_article (article_title,article_url,reprint_url,
+		create_by,
+		create_time, article_type, article_build, article_top,
+		article_img, article_summary, visible,
+		allow_comment, keyword,
+		article_content
+		)
+		values (
+		#{articleTitle,jdbcType=VARCHAR},
+		#{articleUrl,jdbcType=VARCHAR},
+		#{reprintUrl,jdbcType=VARCHAR},
+		#{createBy,jdbcType=INTEGER},
+		sysdate() ,
+		#{articleType,jdbcType=TINYINT},
+		#{articleBuild,jdbcType=TINYINT},
+		#{articleTop,jdbcType=TINYINT},
+		#{articleImg,jdbcType=VARCHAR},
+	    #{articleSummary,jdbcType=VARCHAR},
+		#{visible,jdbcType=BIT},
+		#{allowComment,jdbcType=BIT},
+		#{keyword,jdbcType=VARCHAR},
+		#{articleContent,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+       <!-- 关联文章分类 -->
+   <!--  <insert id="insertCmsArticleCat">
+    insert  cms_article_cat(article_id,cat_id) values (#{articleId},#{catId}) where 
+    article_id in(select article_id from cms_article) and 
+    cat_id in(select article_id from cms_article)
+    </insert> -->
+
+	<update id="updateCmsArticleById"
+		parameterType="com.ruoyi.cms.model.po.CmsArticle">
+		update cms_article
+		<set>
+			<if test="articleTitle != null">
+				article_title = #{articleTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=INTEGER},
+			</if>
+			<if test="true">
+				update_time = sysdate(),
+			</if>
+			<if test="articleType != null">
+				article_type = #{articleType,jdbcType=TINYINT},
+			</if>
+			<if test="articleBuild != null">
+				article_build = #{articleBuild,jdbcType=TINYINT},
+			</if>
+			<if test="articleTop != null">
+				article_top = #{articleTop,jdbcType=TINYINT},
+			</if>
+			<if test="articleImg != null">
+				article_img = #{articleImg,jdbcType=VARCHAR},
+			</if>
+			<if test="articleUrl != null">
+				article_url = #{articleUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="reprintUrl != null">
+				reprint_url = #{reprintUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="articleSummary != null">
+				article_summary = #{articleSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="visible != null">
+				visible = #{visible,jdbcType=BIT},
+			</if>
+			<if test="allowComment != null">
+				allow_comment = #{allowComment,jdbcType=BIT},
+			</if>
+			<if test="keyword != null">
+				keyword = #{keyword,jdbcType=VARCHAR},
+			</if>
+			<if test="articleContent != null">
+				article_content = #{articleContent,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where article_id = #{articleId,jdbcType=INTEGER}
+	</update>
+      <!-- 删除文章 -->
+	<delete id="deleteCmsArticleById" parameterType="long">
+		delete from
+		cms_article where id=#{id}
+	</delete>
+	<!-- 可能删除多个 -->
+	<delete id="deleteCmsArticleCat" >
+		delete from
+		cms_article_cat where article_id=#{articleId}
+	</delete>
+	<!-- 通过catId和articleId删除关联表 仅删除一个-->
+	<delete id="deleteAcOne" >
+		delete from
+		cms_article_cat where cat_id=#{catId} and article_id=#{articleId}
+	</delete>
+
+	<select id="listCmsArticle" parameterType="com.ruoyi.cms.model.vo.ArticleVo" resultMap="BaseResultMap" >
+		select article_id, article_title, create_by, create_time, update_by,
+		update_time,article_type,article_build, article_top, article_img,
+		article_summary,reprint_url,
+		visible, allow_comment,article_url,
+		keyword from cms_article
+		<where>
+		<if test="articleId!=null">
+		and article_id=#{articleId}
+		</if>
+		<if test="articleTitle!=null and articleTitle != ''">
+		and article_title like concat('%', #{articleTitle}, '%')
+		</if>
+		<if test="createBy!=null">
+		and create_by=#{createBy}
+		</if>
+		 <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+		and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+		</if>
+		<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+		and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+		</if>
+		<if test="articleType!=null">
+		and article_type=#{articleType}
+		</if>
+		<if test="articleTop!=null">
+		and article_top=#{articleTop}
+		</if>
+		<if test="visible!=null">
+		and visible=#{visible}
+		</if>
+		<if test="articleBuild!=null">
+		and article_build=#{articleBuild}
+		</if>
+		<if test="cats!=null and cats[0]!=-1">
+		and article_id in(select article_id from cms_article_cat where cat_id in <foreach collection="cats" index="index" item="catId" open="(" separator="," close=")">
+			#{catId}
+		</foreach> )
+		</if>
+		</where>
+	</select>
+	
+	<select id="getCmsArticleById" parameterType="long" resultMap="BaseResultMap">
+	select <include refid="All_Column_List" /> from cms_article where article_id=#{articleId}
+	</select>
+	
+	<select id="checkArticleUrl"  resultType="int">
+	select count(1) from cms_article where <if test="articleId!=null">
+	article_id not in(#{articleId}) and
+	</if> article_url=#{articleUrl}
+	</select>
+	
+	<select id="checkArticleTitle"  resultType="int">
+	select count(1) from cms_article where <if test="articleId!=null">
+	article_id not in(#{articleId}) and
+	</if> article_title=#{articleTitle} 
+	</select>
+	
+	<select id="checkUrlAndTitle"  resultType="int">
+	select count(1) from cms_article where 
+	<if test="articleId!=null">
+	article_id not in(#{articleId}) and
+	</if>
+	(article_title=#{articleTitle} or article_url=#{articleUrl})
+	</select>
+	
+	<select id="listCmsArticleBasic" resultMap="BaseResultMap" parameterType="com.ruoyi.cms.model.po.CmsArticle">
+		select  <include refid="Basic_Column_List" /> from cms_article
+	</select>
+	<delete id="deleteCmsArticleByIds" parameterType="Long">
+	delete from cms_article where article_id in (
+	<foreach collection="articleIds" separator="," item="articleId">
+		#{articleId}</foreach>
+	)
+	</delete>
+</mapper>

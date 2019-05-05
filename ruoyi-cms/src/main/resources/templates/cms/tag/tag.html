@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('标签列表')" />
+</head>
+<style>
+.note li {
+	margin: 10px 40px 50px 0;
+	float: left;
+	display: list-item;
+	list-style: none;
+}
+
+ul.note li>.im {
+	text-decoration: none;
+	color: #000;
+	background: #fff;
+	display: block;
+	overflow: hidden;
+	height: 80px;
+	width: 150px;
+	padding: 5px 10px 10px 10px;
+	transform: rotate(5deg);
+	border-radius: 10px;
+	-moz-box-shadow: 5px 5px 7px #212121;
+	-webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, 0.7);
+	box-shadow: 5px 5px 7px rgba(33, 33, 33, 0.7);
+	-moz-transition: -moz-transform 0.15s linear;
+	-o-transition: -o-transform 0.15s linear;
+	-webkit-transition: -webkit-transform 0.15s linear;
+}
+
+ul.note li div span {
+	display: block;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+ul.note li div:hover {
+	transform: rotate(0);
+}
+</style>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="tag-form" action="/cms/tag">
+					<div class="select-list">
+						<ul>
+							<li>标签名称<input type="text" name="tagName"
+								placeholder="请输入标签名" />
+							</li>
+							<li><a class="btn btn-primary btn-rounded btn-sm"
+								onclick="tagSearch()"><i class="fa fa-search"></i>&nbsp;搜索</a> <a
+								class="btn btn-warning btn-rounded btn-sm"
+								onclick="$.form.reset()"> <i class="fa fa-refresh"></i>&nbsp;重置
+							</a></li>
+						</ul>
+					</div>
+				</form>
+			</div>
+
+			<div class="col-md-12 select-table table-striped">
+				<div class="btn-group-sm" id="toolbar" role="group">
+					<a class="btn btn-success" onclick="add()"> <i
+						class="fa fa-plus"></i> 添加标签
+					</a>
+				</div>
+				<ul class="note">
+					<li th:if="${#lists.isEmpty(tags)}">未找到数据！</li>
+					<li th:if="tags!=null" th:each="tag : ${tags}">
+						<div class="im">
+							<div class="row">
+								<div class="col-md-8">
+									<small> <a href="#" title="删除" th:onclick="|del(${tag.tagId})|"><i
+											class="fa fa-trash-o " aria-hidden="true"></i></a> <a href="#"
+										title="修改" th:onclick="|edit(${tag.tagId})|"><i
+											class="fa fa-pencil-square" aria-hidden="true"></i></a> <a
+										href="#" title="详情" th:onclick="|detail(${tag.tagId})|"><i
+											class="fa fa-info-circle" aria-hidden="true"></i></a>
+									</small> <br> <span th:text="${tag.tagName}"> 君子动口不 </span> <small
+										th:text="${#dates.format(tag.createTime,'yyyy-MM-dd')}">2017-12-12</small>
+								</div>
+								<div class="col-md-4" th:text="${tag.tagCount}"
+									style="height: 80px; line-height: 80px; padding: 0">1000</div>
+							</div>
+						</div>
+					</li>
+					<li th:if="tags==null">未找到数据！</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script type="text/html" id="addModel">
+<form class="form-horizontal m" id="form-tag-add" >	
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签名</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="tagName" id="tagName"
+					placeholder="标签名" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签路径</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="tagUrl"
+					placeholder="标签路径" >
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">标签描述</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text"  name="remark"
+					placeholder="标签描述">
+			</div>
+		</div>
+		<div class="form-group text-center">
+			<button type="button" class="btn btn-primary" onclick="submitHandler()">保存</button>
+		</div>
+		</form>
+		</script>
+</body>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+	var prefix = ctx + "cms/tag";
+
+	function tagSearch() {
+		$("#tag-form").submit();
+	}
+	function add() {
+		layer.open({
+			title : "添加标签",
+			type : 1,
+			content : $("#addModel").html(),
+			success : function() {
+				$("#form-tag-add").validate(
+						{
+							rules : {
+								tagName : {
+									remote : {
+										url : prefix + "/checkTagNameUnique",
+										type : "post",
+										dataType : "json",
+										data : {
+											"tagName" : function() {
+												return $.common.trim($(
+														"#tagName").val());
+											}
+										},
+										dataFilter : function(data, type) {
+											return $.validate.unique(data);
+										}
+									}
+								}
+							},
+							messages : {
+								"tagName" : {
+									remote : "标签名已经存在"
+								}
+							},
+							focusCleanup : true
+						});
+			}
+		});
+	};
+
+	function submitHandler() {
+		if ($.validate.form("form-tag-add")) {
+			$.post(prefix + "/add", $('#form-tag-add').serialize(), function(
+					data) {
+				if (data.code === 0) {
+					layer.msg('添加成功', {
+						  icon: 1,
+						  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+						}, function(){
+							layer.closeAll();
+							location.reload();
+						});   
+
+				} else {
+					layer.msg('添加失败', {
+						  icon: 1,
+						  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+						}, function(){
+							layer.closeAll();
+							location.reload();
+						}); 
+				}
+
+			});
+		}
+	};
+
+	function edit(tagId) {
+		layer.open({
+			title : "编辑标签",
+			area : [ '300px', '430px' ],
+			type : 2,
+			content : prefix + "/edit/" + tagId //这里content是一个普通的String
+
+		});
+
+	};
+	function detail(tagId) {
+		layer.open({
+			title : "标签详情",
+			area : [ '300px', '460px' ],
+			type : 2,
+			content : prefix + "/detail/" + tagId //这里content是一个普通的String
+		});
+
+	};
+	function del(tagId) {
+     $.get(prefix + "/remove/"+tagId,function(data){
+    	 if (data.code === 0) {
+				layer.msg('删除成功', {
+					  icon: 1,
+					  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+					}, function(){
+						location.reload();
+					});   
+
+			} else {
+				layer.msg('添加失败', {
+					  icon: 1,
+					  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+					}, function(){
+						location.reload();
+					}); 
+			}
+    	 
+     })
+	};
+</script>
+</html>
